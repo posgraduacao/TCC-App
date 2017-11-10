@@ -1,0 +1,182 @@
+<div ng-controller="ClienteController as ctrl" ng-init="ctrl.init()">
+	<h2>Cadastro de Clientes</h2>
+
+	<div class="row" style="margin-bottom: 15px;">
+		<div class="col-sm-4">
+			<button type="button" class="btn btn-primary" data-toggle="modal"
+				data-target="#myModal" ng-click="ctrl.addCliente()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> <strong>Novo Cliente</strong></button>
+		</div>
+		<div class="col-sm-4 col-sm-offset-4">
+			<div class="input-group">
+				<span class="input-group-addon" id="search">
+					<span class="glyphicon glyphicon-search"></span>
+				</span>
+				<input type="text"
+					class="form-control" placeholder="Procurar"
+					aria-describedby="search" ng-model="searchKey">
+			</div>
+		</div>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table table-hover" id="table">
+			<thead>
+				<tr>
+					<th class="text-center">ID</th>
+					<th>Nome</th>
+					<th>Documento</th>
+					<th>Telefone</th>
+					<th>E-mail</th>
+					<th class="text-center">Status</th>
+					<th width="1%"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="cliente in ctrl.listClientes | filter:searchKey">
+					<td class="text-center">{{cliente.id}}</td>
+					<td>{{cliente.nome}}</td>
+					<td>{{cliente.documento |brCpfCnpj}}</td>
+					<td>{{cliente.telefone |brPhoneNumber}}</td>
+					<td>{{cliente.email}}</td>
+					<td nowrap="nowrap" class="text-center">
+						<a ng-click="ctrl.alterarStatusCliente(cliente)" 
+							title="Ativar Cliente" ng-if="cliente.status==0" class="text-muted">
+							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+						</a>						
+						<a ng-click="ctrl.alterarStatusCliente(cliente)" 
+							title="Desativar Cliente" ng-if="cliente.status==1" class="text-success">
+							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+						</a>
+					</td>
+					<td nowrap="nowrap">
+						<button data-toggle="modal" data-target="#myModal" ng-click="ctrl.editCliente(cliente)" 
+							title="Editar" class="btn btn-warning btn-sm ">
+							<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+						</button>
+						<button ng-click="ctrl.deleteCliente(cliente)"
+							title="Excluir" class="btn btn-danger btn-sm ">
+							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="modal fade" data-backdrop="static" id="myModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" ng-if="!ctrl.change">Novo Cliente</h3>
+					<h3 class="modal-title" ng-if="ctrl.change">Editar Cliente</h3>
+				</div>
+				<form class="form-horizontal" ng-submit="ctrl.saveCliente()" name="formulario">
+					<div class="modal-body">
+						<div class="row">
+							<input type="hidden" name="codigo" class="form-control" 
+								ng-model="ctrl.cliente.id" placeholder="Código" />
+
+							<div class="control-group col-md-12" ng-class="{'has-error':formulario.nome.$invalid && formulario.nome.$touched, 'has-success':formulario.nome.$valid}">
+								<label for="nome" class="control-label">Nome</label> 
+								<input type="text" name="nome" class="form-control" 
+									ng-model="ctrl.cliente.nome" placeholder="Nome" ng-required="true"/>
+								<span ng-show="formulario.nome.$error.required && formulario.nome.$touched" class="help-block">
+									Este campo é obrigatório.
+								</span>
+							</div>
+							<div class="control-group col-md-4" ng-class="{'has-error':formulario.documento.$invalid && formulario.documento.$touched, 'has-success':formulario.documento.$valid}">
+								<label for="documento" class="control-label">Documento</label> 
+								<input type="text" name="documento" class="form-control	" 
+									ng-model="ctrl.cliente.documento" placeholder="Documento" ng-required="true" ui-br-cpfcnpj-mask/>
+								<span ng-show="formulario.documento.$error.required && formulario.documento.$touched" class="help-block">
+									Este campo é obrigatório.
+								</span>
+								<span ng-show="formulario.documento.$invalid && !formulario.documento.$error.required" class="help-block">
+									CPF ou CNPJ inválido.
+								</span>
+							</div>
+							<div class="control-group col-md-4" ng-class="{'has-error':formulario.telefone.$invalid && formulario.telefone.$touched, 'has-success':formulario.telefone.$valid}">
+								<label for="telefone"  class="control-label">Telefone</label> 
+								<input
+									type="text" name="telefone" class="form-control"
+									ng-model="ctrl.cliente.telefone" placeholder="Telefone" ng-required="true" ui-br-phone-number/>
+								<span ng-show="formulario.telefone.$error.required && formulario.telefone.$touched" class="help-block">
+									Este campo é obrigatório.
+								</span>
+								<span ng-show="formulario.telefone.$invalid && !formulario.telefone.$error.required" class="help-block">
+									Número do telefone inválido.
+								</span>
+							</div>
+							<div class="control-group col-md-4" ng-class="{'has-error':formulario.celular.$invalid && formulario.celular.$touched, 'has-success':formulario.celular.$valid}">
+								<label for="celular"  class="control-label">Celular</label> 
+								<input
+									type="text" name="celular" class="form-control"
+									ng-model="ctrl.cliente.celular" placeholder="Celular" ng-required="true" ui-br-phone-number/>
+								<span ng-show="formulario.celular.$error.required && formulario.celular.$touched" class="help-block">
+									Este campo é obrigatório.
+								</span>
+								<span ng-show="formulario.celular.$invalid && !formulario.celular.$error.required" class="help-block">
+									Número de celular inválido.
+								</span>
+							</div>
+							<div class="control-group col-md-8" ng-class="{'has-error':formulario.email.$invalid && formulario.email.$touched, 'has-success':formulario.email.$valid}">
+								<label for="email"  class="control-label">E-mail</label> 
+								<input
+									type="email" name="email" class="form-control"
+									ng-model="ctrl.cliente.email" placeholder="E-mail" ng-required="true" />
+								<span ng-show="formulario.email.$error.required && formulario.email.$touched" class="help-block">
+									Este campo é obrigatório.
+								</span>
+								<span ng-show="formulario.email.$invalid && !formulario.email.$error.required" class="help-block">
+									O e-mail esta incorreto.
+								</span>
+							</div>
+							<div class="control-group col-md-4" ng-class="{'has-error':formulario.cep.$invalid && formulario.cep.$touched, 'has-success':formulario.cep.$valid}">
+								<label for="cep" class="control-label">CEP</label> 
+								<input type="text" name="cep" class="form-control	" 
+									ng-model="ctrl.cliente.cep" placeholder="CEP" ng-required="true" ui-br-cep-mask/>
+								<span ng-show="formulario.cep.$error.required && formulario.cep.$touched" class="help-block">
+									Este campo é obrigatório.
+								</span>
+								<span ng-show="formulario.cep.$invalid && !formulario.cep.$error.required" class="help-block">
+									CEP inválido.
+								</span>
+							</div>
+							<div class="control-group col-md-7" ng-class="{'has-error':formulario.endereco.$invalid && formulario.endereco.$touched, 'has-success':formulario.endereco.$valid}">
+								<label for="endereco"  class="control-label">Endereço</label> 
+								<input
+									type="text" name="endereco" class="form-control"
+									ng-model="ctrl.cliente.endereco" placeholder="Endereço" ng-required="true" />
+								<span ng-show="formulario.endereco.$error.required && formulario.endereco.$touched" class="help-block">
+									Este campo é obrigatório.
+								</span>
+							</div>
+							<div class="control-group col-md-2" ng-class="{'has-error':formulario.numero.$invalid && formulario.numero.$touched, 'has-success':formulario.numero.$valid}">
+								<label for="numero"  class="control-label">Número</label> 
+								<input
+									type="text" name="numero" class="form-control"
+									ng-model="ctrl.cliente.numero" placeholder="Número" ng-required="true"/>
+								<span ng-show="formulario.numero.$error.required && formulario.numero.$touched" class="help-block">
+									Este campo é obrigatório.
+								</span>
+							</div>
+							<div class="control-group col-md-3" ng-class="{'has-success':formulario.complemento.$touched}">
+								<label for="complemento"  class="control-label">Complemento</label> 
+								<input
+									type="text" name="complemento" class="form-control"
+									ng-model="ctrl.cliente.complemento" placeholder="Complemento"/>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="formulario.$setPristine(); formulario.$setUntouched();">Cancelar</button>
+						<button type="submit" class="btn btn-success" ng-disabled="formulario.$invalid">Salvar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+

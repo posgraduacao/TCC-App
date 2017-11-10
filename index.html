@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="br">
+<head>
+	<meta charset="utf-8">
+	<meta http-equv="X-UA-Compatible" content="IE=edge">
+	<base href="/tccapp/">
+	<title>TCC - Dev JAVA</title>
+	<link rel="stylesheet" href="assets/components/bootstrap/dist/css/bootstrap.min.css">
+</head>
+<body ng-app="app">
+
+	<div ng-include='"templates/menu.html"'></div>
+	<div class="container" ng-view></div>
+
+	<script type="text/javascript" src="assets/components/jquery/dist/jquery.min.js"></script>
+	<script type="text/javascript" src="assets/components/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="assets/components/angular/angular.min.js"></script>
+	<script type="text/javascript" src="assets/components/ngLocale/angular-locale_pt-br.js"></script>
+	<script	type="text/javascript" src="assets/components/angular-route/angular-route.min.js"></script>
+	<script	type="text/javascript" src="assets/components/angular-resource/angular-resource.min.js"></script>
+	<script	type="text/javascript" src="assets/components/angular-input-masks/angular-input-masks-standalone.min.js"></script>
+	<script	type="text/javascript" src="assets/components/angular-br-filters/release/angular-br-filters.min.js"></script>
+	<script	type="text/javascript" src="assets/components/jquery.maskedinput/dist/jquery.maskedinput.min.js"></script>
+
+	<script type="text/javascript" src="config/app.module.js"></script>
+	<script type="text/javascript" src="config/app.config.js"></script>
+
+	<script type="text/javascript" src="app/cliente/clienteController.js"></script>	
+	<script type="text/javascript" src="app/cliente/clienteFactory.js"></script>
+	<script type="text/javascript" src="app/produto/produtoController.js"></script>	
+	<script type="text/javascript" src="app/produto/produtoFactory.js"></script>	
+	<script type="text/javascript" src="app/colaborador/colaboradorController.js"></script>	
+	<script type="text/javascript" src="app/colaborador/colaboradorFactory.js"></script>
+	<script type="text/javascript" src="app/chamado/chamadoController.js"></script>	
+	<script type="text/javascript" src="app/chamado/chamadoFactory.js"></script>
+	<script type="text/javascript" src="app/chamado/acaoChamadoFactory.js"></script>
+	<script type="text/javascript" src="app/chamado/tipoAcaoFactory.js"></script>
+
+</body>
+</html>

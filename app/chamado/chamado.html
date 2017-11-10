@@ -1,0 +1,182 @@
+<div ng-controller="ChamadoController as ctrl" ng-init="ctrl.init()">
+	<h2>Cadastro de Chamados</h2>
+
+	<div class="row" style="margin-bottom: 15px;">
+		<div class="col-sm-4">
+			<button type="button" class="btn btn-primary" data-toggle="modal"
+				data-target="#myModal" ng-click="ctrl.addChamado()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> <strong>Novo Chamado</strong></button>
+		</div>
+		<div class="col-sm-4 col-sm-offset-4">
+			<div class="input-group">
+				<span class="input-group-addon" id="search">
+					<span class="glyphicon glyphicon-search"></span>
+				</span>
+				<input type="text"
+					class="form-control" placeholder="Procurar"
+					aria-describedby="search" ng-model="searchKey">
+			</div>
+		</div>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table table-hover" id="table">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Cliente</th>
+					<th>Solicitação</th>
+					<th>Produto</th>
+					<th>Data/Hora Abertura</th>
+					<th>Data/Hora Fechamento</th>
+					<th>Status</th>
+					<th width="1%"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="chamado in ctrl.listChamados | filter:searchKey">
+					<td>{{chamado.id}}</td>
+					<td>{{chamado.cliente.nome}}</td>
+					<td>{{chamado.solicitacao}}</td>
+					<td>{{chamado.produto.nome}}</td>
+					<td>{{chamado.dataAbertura |date:"dd/MM/yyyy HH:mm:ss"}}</td>
+					<td>{{chamado.dataFechamento |date:"dd/MM/yyyy HH:mm:ss"}}</td>
+					<td>{{chamado.status}}</td>
+					<td nowrap="nowrap">
+						<button ng-click="ctrl.addAcaoChamado(chamado)" 
+							title="Nova Ação para o Chamado" class="btn btn-success btn-sm">
+							<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+						</button>
+						<button data-toggle="modal" data-target="#modalAcoes" ng-click="ctrl.getAcoesChamado(chamado)" 
+							title="Informações do Chamado" class="btn btn-primary btn-sm">
+							<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+						</button>
+						<button data-toggle="modal" data-target="#myModal" ng-click="ctrl.editChamado(chamado)" 
+							title="Editar Chamado" class="btn btn-warning btn-sm">
+							<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+						</button>
+						<button ng-click="ctrl.deleteChamado(chamado)"
+							title="Excluir Chamado" class="btn btn-danger btn-sm">
+							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+						</button>
+					</td>
+				</tr>
+				
+			</tbody>
+		</table>
+	</div>
+
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" ng-if="!ctrl.change">Novo Chamado</h3>
+					<h3 class="modal-title" ng-if="ctrl.change">Editar Chamado</h3>
+				</div>
+				<form class="form-horizontal" ng-submit="ctrl.saveChamado()">
+					<div class="modal-body">
+						<input type="hidden" id="codigo" class="form-control" 
+							ng-model="ctrl.chamado.id" placeholder="Código" />
+
+						<div class="control-group">
+							<label for="cliente" class="control-label">Cliente</label> 
+							<select class="form-control" nome="cliente" ng-model="ctrl.chamado.cliente.id" ng-options="c.id as c.nome for c in ctrl.listClientes">
+							</select>
+						</div>
+						<div class="control-group">
+							<label for="produto" class="control-label">Produto</label> 
+							<select class="form-control" name="produto" ng-model="ctrl.chamado.produto.id" ng-options="p.id as p.nome for p in ctrl.listProdutos">
+							</select>
+						</div>
+
+						<div class="control-group">
+							<label for="solicitacao" class="control-label">Solicitacao</label> 
+							<select class="form-control" name="solicitacao" ng-model="ctrl.chamado.solicitacao">
+								<option value="Instalação">Instalação</option>
+								<option value="Manutenção">Manutenção</option>
+								<option value="Desinstalação">Desinstalação</option>
+							</select>
+						</div>
+						<div class="control-group">
+							<label for="observacao" class="control-label">Observação</label> 
+							<input type="text" id="observacao" class="form-control" 
+								ng-model="ctrl.chamado.observacao" placeholder="Observação" />
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+						<button type="submit" class="btn btn-success">Salvar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modalNovaAcao" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" >Nova Ação do Chamado {{ctrl.chamado.id}}</h3>
+				</div>
+				<form class="form-horizontal" ng-submit="ctrl.saveAcaoChamado()">
+					<div class="modal-body">
+						<div class="control-group">
+							<label for="tipoAcao" class="control-label">Tipo da Ação</label> 
+							<select class="form-control" nome="tipoAcao" ng-model="ctrl.acaoChamado.tipo" ng-options="t for t in ctrl.listTiposAcao">
+							</select>
+						</div>
+
+						<div class="control-group">
+							<label for="colaborador" class="control-label">Colaborador</label> 
+							<select class="form-control" nome="colaborador" ng-model="ctrl.acaoChamado.colaborador.id" ng-options="c.id as c.nome for c in ctrl.listColaboradores">
+							</select>
+						</div>
+						<div class="control-group">
+							<label for="observacao" class="control-label">Observação</label> 
+							<input type="text" id="detalhe" class="form-control" 
+								ng-model="ctrl.acaoChamado.observacao" placeholder="Observacao" />
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+						<button type="submit" class="btn btn-success">Salvar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modalAcoes" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title">Acões do chamado {{ctrl.chamado.id}}</h3>
+				</div>
+				<div class="modal-body">
+					<div class="table-responsive">
+						<table class="table table-hover" id="tableAcoes">
+							<thead>
+								<tr>
+									<th>Data/Hora</th>
+									<th>Colaborador</th>
+									<th>Ação</th>
+									<th>Detalhe</th>
+								</tr>
+							</thead>
+							<tbody ng-repeat="acao in ctrl.listAcoesChamado">
+								<tr>
+									<td>{{acao.dataCriacao |date:"dd/MM/yyyy HH:mm:ss"}}</td>
+									<td>{{acao.colaborador.nome}}</td>
+									<td>{{acao.tipo}}</td>
+									<td>{{acao.observacao}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+

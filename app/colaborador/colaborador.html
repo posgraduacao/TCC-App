@@ -1,0 +1,119 @@
+<div ng-controller="ColaboradorController as ctrl" ng-init="ctrl.init()">
+	<h2>Cadastro de Colaboradores</h2>
+
+	<div class="row" style="margin-bottom: 15px;">
+		<div class="col-sm-4">
+			<button type="button" class="btn btn-primary" data-toggle="modal"
+				data-target="#myModal" ng-click="ctrl.addColaborador()"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> <strong>Novo Colaborador</strong></button>
+		</div>
+		<div class="col-sm-4 col-sm-offset-4">
+			<div class="input-group">
+				<span class="input-group-addon" id="search">
+					<span class="glyphicon glyphicon-search"></span>
+				</span>
+				<input type="text"
+					class="form-control" placeholder="Procurar"
+					aria-describedby="search" ng-model="searchKey">
+			</div>
+		</div>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table table-hover" id="table">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Nome</th>
+					<th>E-mail</th>
+					<th class="text-center">Status</th>
+					<th width="1%"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="colaborador in ctrl.listColaboradores | filter:searchKey">
+					<td>{{colaborador.id}}</td>
+					<td>{{colaborador.nome}}</td>
+					<td>{{colaborador.email}}</td>
+					<td nowrap="nowrap" class="text-center">
+						<a ng-click="ctrl.alterarStatusColaborador(colaborador)" 
+							title="Ativar Colaborador" ng-if="colaborador.status==0" class="text-muted">
+							<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+						</a>						
+						<a ng-click="ctrl.alterarStatusColaborador(colaborador)" 
+							title="Desativar Colaborador" ng-if="colaborador.status==1" class="text-success">
+							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+						</a>
+					</td>
+					<td nowrap="nowrap">
+						<button data-toggle="modal" data-target="#myModal" ng-click="ctrl.editColaborador(colaborador)" 
+							title="Editar" class="btn btn-warning btn-sm ">
+							<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+						</button>
+						<button ng-click="ctrl.deleteColaborador(colaborador)"
+							title="Excluir" class="btn btn-danger btn-sm ">
+							<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" ng-if="!ctrl.change">Novo Colaborador</h3>
+					<h3 class="modal-title" ng-if="ctrl.change">Editar Colaborador</h3>
+				</div>
+				<form class="form-horizontal" ng-submit="ctrl.saveColaborador()" name="formulario">
+					<div class="modal-body">
+						<div class="row">
+							<input type="hidden" name="codigo" class="form-control" 
+								ng-model="ctrl.colaborador.id" placeholder="Código" />
+
+							<div class="control-group col-md-12" ng-class="{'has-error':formulario.nome.$invalid && formulario.nome.$touched, 'has-success':formulario.nome.$valid}">
+								<label for="nome" class="control-label">Nome</label> 
+								<input type="text" name="nome" class="form-control" 
+									ng-model="ctrl.colaborador.nome" placeholder="Nome" ng-required="true"/>
+								<span ng-show="formulario.nome.$error.required && formulario.nome.$touched" class="help-block">
+									Este campo é obrigatório.
+								</span>
+							</div>
+							<div class="control-group col-md-8" ng-class="{'has-error':formulario.email.$invalid && formulario.email.$touched, 'has-success':formulario.email.$valid}">
+								<label for="email" class="control-label">E-mail</label> 
+								<input type="email" name="email" class="form-control" 
+									ng-model="ctrl.colaborador.email" placeholder="E-mail" ng-required="true"/>
+								<span ng-show="formulario.email.$error.required && formulario.email.$touched" class="help-block">
+									Este campo é obrigatório.
+								</span>
+								<span ng-show="formulario.email.$invalid && !formulario.email.$error.required" class="help-block">
+									O e-mail esta incorreto.
+								</span>
+							</div>
+							<div class="control-group col-md-4" ng-class="{'has-error':formulario.senha.$invalid && formulario.senha.$touched, 'has-success':formulario.senha.$valid}">
+								<label for="senha" class="control-label">Senha</label> 
+								<input type="password" name="senha" class="form-control" 
+									ng-model="ctrl.colaborador.senha" placeholder="Senha" ng-required="true" ng-minlength="8" ng-maxlength="8"/>
+								<span ng-show="formulario.senha.$error.required && formulario.senha.$touched" class="help-block">
+									Este campo é obrigatório.
+								</span>
+								<span ng-show="formulario.senha.$error.minlength || formulario.senha.$error.maxlength && !formulario.senha.$error.required" class="help-block">
+									A senha deve conter 8 caracteres.
+								</span>
+
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="formulario.$setPristine(); formulario.$setUntouched();">Cancelar</button>
+						<button type="submit" class="btn btn-success" ng-disabled="formulario.$invalid">Salvar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
